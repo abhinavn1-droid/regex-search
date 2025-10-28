@@ -1,0 +1,35 @@
+# .rubocop.yml
+require:
+  - rubocop-minitest
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  Exclude:
+    - "vendor/**/*"
+    - "db/schema.rb"
+
+Layout/LineLength:
+  Max: 100
+
+Minitest/AssertEmptyLiteral:
+  Enabled: true
+
+Layout/EmptyLines:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: true
+  Max: 35   # maximum number of lines allowed in a method
+  CountComments: false  # whether to count comment lines
+  Exclude:
+    - 'test/**/*'       # optional: ignore test files
+
+Style/Documentation:
+  Enabled: false
+
+Lint/EmptyClass:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
