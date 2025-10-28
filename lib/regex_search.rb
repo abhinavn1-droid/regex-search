@@ -5,6 +5,7 @@ require_relative 'regex_search/insights'
 require_relative 'regex_search/errors'
 require_relative 'regex_search/result'
 require_relative 'regex_search/file_type_detector'
+require_relative 'regex_search/match_filter'
 require 'logger'
 
 # RegexSearch is a lightweight Ruby library for searching text content using regular expressions.
@@ -36,8 +37,21 @@ module RegexSearch
   # @!attribute [r] results
   #   @return [Array<Hash>] The search results containing matches and their context
   class Runner
-    # @return [Array<Hash>] The search results for the given input and pattern
+    # @return [Array<Hash>] The search results containing matches and their context
     attr_reader :results
+
+    # Applies filters to the current search results
+    #
+    # @param filter_options [Hash] Filter criteria
+    # @option filter_options [String] :keyword Text to search within matches
+    # @option filter_options [Array<Symbol>] :tags Required tags
+    # @option filter_options [Integer] :min_context_density Minimum context density
+    # @option filter_options [Array<Regexp>] :exclude_patterns Patterns to exclude
+    # @option filter_options [Array<Symbol>] :file_types Allowed file types
+    # @return [Array<Hash>] Filtered search results
+    def filter(**filter_options)
+      @results = MatchFilter.filter(@results, **filter_options)
+    end
 
     # Initializes a new Runner instance and performs the search operation
     #
@@ -117,9 +131,9 @@ module RegexSearch
           raise Errors::FileReadError, "Failed to read file #{path}: #{e.message}"
         end
 
-        filetype = FileTypeDetector.detect(path)  # Fixed: was current_input[:path]
+        filetype = FileTypeDetector.detect(path) # Fixed: was current_input[:path]
         klass = Insights::SUPPORTED_FILE_TYPES[filetype] || Insights::Base
-        @logger.debug("Detected file type: .#{filetype}, using #{klass}")  # Fixed: was ext
+        @logger.debug("Detected file type: .#{filetype}, using #{klass}") # Fixed: was ext
 
         inputs << { data:, path:, filetype:, insights_klass: klass }
       end

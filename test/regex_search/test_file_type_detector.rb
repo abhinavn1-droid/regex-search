@@ -12,8 +12,6 @@ module Marcel
         'application/json'
       when '.txt'
         'text/plain'
-      else
-        nil
       end
     end
   end

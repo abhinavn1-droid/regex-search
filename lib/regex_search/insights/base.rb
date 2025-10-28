@@ -23,7 +23,7 @@ module RegexSearch
       # @param _ [Hash] The input metadata (unused in base class)
       # @param match [Hash] The match data to analyze
       # @return [Hash] The match with any added insights
-      def self.call(_, match)  
+      def self.call(_, match)
         match
       end
     end

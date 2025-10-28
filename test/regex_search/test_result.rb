@@ -26,6 +26,7 @@ class TestResult < Minitest::Test
     assert_equal :txt, result.filetype
 
     h = result.to_h
+
     assert_equal 'sample.txt', h[:path]
     assert_equal :txt, h[:filetype]
     assert_equal 2, h[:match][:line_number]

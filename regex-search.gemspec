@@ -13,6 +13,6 @@ Gem::Specification.new do |spec|
   spec.files         = Dir['lib/**/*', 'test/**/*', 'Rakefile', 'README.md']
   spec.require_paths = ['lib']
   spec.metadata['rubygems_mfa_required'] = 'true'
-  
-  spec.add_runtime_dependency 'marcel', '~> 1.0'  # For file type detection
+
+  spec.add_dependency 'marcel', '~> 1.0' # For file type detection
 end

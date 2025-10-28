@@ -6,10 +6,10 @@ source 'https://rubygems.org'
 group :development, :test do
   gem 'minitest', '~> 5.0'
   gem 'rake'
+  gem 'redcarpet'
   gem 'rubocop', '~> 1.65' # latest stable series
   gem 'rubocop-minitest', '~> 0.35' # optional, for Minitest cops
-  gem 'yard', '~> 0.9.34'  # for documentation
-  gem 'redcarpet'
+  gem 'yard', '~> 0.9.34' # for documentation
 end
 
 gemspec
