@@ -52,11 +52,13 @@ module RegexSearch
       end
 
       def match_contains_keyword?(match, keyword)
-        return true if match.line.include?(keyword)
-        return true if match.context_before&.include?(keyword)
-        return true if match.context_after&.include?(keyword)
-
-        false
+        # Only consider the matched line itself for keyword filtering.
+        # Previously context_before/after were included which could cause
+        # adjacent matches to be selected when the keyword appears only in
+        # the neighboring line. Tests expect filtering to match the line
+        # containing the keyword, not matches whose context contains it.
+        return false unless match && match.line
+        match.line.include?(keyword)
       end
 
       def has_required_tags?(match, required_tags)
@@ -77,6 +79,7 @@ module RegexSearch
 
       def matches_file_type?(file_type, required_types)
         return true unless required_types
+
         required_types.include?(file_type)
       end
     end

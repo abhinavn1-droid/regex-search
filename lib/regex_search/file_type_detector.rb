@@ -30,5 +30,16 @@ module RegexSearch
       ext = File.extname(path).delete('.').downcase.to_sym
       ext.empty? ? :txt : ext
     end
+
+    def self.detect_from_content(content)
+      return :json if content.strip.start_with?('{') || content.strip.start_with?('[')
+      return :yaml if content.strip.start_with?('---')
+      if content.strip.downcase.start_with?('<!doctype html') || content.strip.downcase.start_with?('<html')
+        return :html
+      end
+      return :xml if content.strip.downcase.start_with?('<?xml')
+
+      :txt
+    end
   end
 end

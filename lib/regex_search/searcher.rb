@@ -51,7 +51,10 @@ module RegexSearch
         data.each_with_index do |line, idx|
           next unless line =~ regex
 
-          before, after = ContextWindow.extract(data, idx, context_lines)
+          window = ContextWindow.new(data, context_lines)
+          window.move_to(idx)
+          before = window.before
+          after = window.after
 
           match = {
             line_number: idx + 1,

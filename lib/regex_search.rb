@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'regex_search/searcher'
+require_relative 'regex_search/fuzzy_searcher'
 require_relative 'regex_search/insights'
 require_relative 'regex_search/errors'
 require_relative 'regex_search/result'
@@ -58,7 +59,7 @@ module RegexSearch
     # @param input [String, File, Array<String, File>] The input to search.
     #   Can be a string, a file path, a File object, or an array of files/paths
     # @param pattern [Regexp, String] The pattern to search for
-    # @param mode [String] The search mode: 'find', 'find_in_file', or 'find_in_files'
+    # @param mode [String] The search mode: 'find', 'find_in_file', 'find_in_files', or 'fuzzy'
     # @param verbose [Boolean] Whether to output debug logging
     # @param options [Hash] Additional options to pass to the searcher
     # @option options [Integer] :context_lines (1) Number of context lines to include
@@ -84,7 +85,18 @@ module RegexSearch
       @logger.level = verbose ? Logger::DEBUG : Logger::WARN
 
       inputs = process_input(input, mode)
-      @results = Searcher.search(inputs, pattern, options.merge(logger: @logger))
+      if mode == 'fuzzy'
+        searcher = FuzzySearcher.new(pattern.to_s, max_distance: options.fetch(:max_distance, 2))
+        @results = inputs.map do |input|
+          data = input[:data].is_a?(String) ? input[:data] : input[:data].read
+          results = searcher.search_text(data, context_lines: options.fetch(:context_lines, 1))
+          # Update result paths if this came from a file
+          results.each { |r| r.instance_variable_set(:@path, input[:path]) } if input[:path]
+          { result: results, path: input[:path], filetype: input[:filetype] }
+        end
+      else
+        @results = Searcher.search(inputs, pattern, options.merge(logger: @logger))
+      end
     end
 
     private
@@ -107,6 +119,18 @@ module RegexSearch
         process_collection([input])
       when 'find_in_files'
         process_collection(input)
+      when 'fuzzy'
+        # If a string is provided, it may be literal text or a file path.
+        # Treat it as a file path if it's a real file on disk.
+        if input.is_a?(String) && File.file?(input)
+          process_collection([input])
+        elsif input.is_a?(Array)
+          process_collection(input)
+        elsif input.is_a?(String)
+          [{ data: input, path: nil, insights_klass: Insights::Base }]
+        else
+          process_collection(input.is_a?(Array) ? input : [input])
+        end
       else
         raise Errors::MalformedInputError, "Unknown mode: #{mode}"
       end
