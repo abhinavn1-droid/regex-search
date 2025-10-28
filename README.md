@@ -30,11 +30,25 @@ options = {
 regex-search/
 ├── regex-search.gemspec
 ├── Rakefile
+├── Gemfile
+├── Gemfile.lock
+├── .rubocop.yml
+│
 ├── lib/
 │   ├── regex_search.rb
 │   └── regex_search/
-│       └── searcher.rb
+│       ├── searcher.rb
+│       ├── insights.rb
+│       └── insights/
+│           ├── base.rb
+│           └── json.rb
+│
 └── test/
     ├── test_helper.rb
-    └── test_searcher.rb
+    ├── test_regex_search.rb
+    └── regex_search/
+        ├── test_searcher.rb
+        └── insights/
+            ├── test_base.rb
+            └── test_json.rb
 ```

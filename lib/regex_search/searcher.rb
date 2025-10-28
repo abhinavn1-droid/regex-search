@@ -8,8 +8,8 @@ module RegexSearch
       regex = pattern.is_a?(Regexp) ? pattern : Regexp.new(pattern)
       stop_at_first = options.fetch(:stop_at_first_match, false)
 
-      inputs.map do |fd|
-        data = fd[:data].is_a?(String) ? fd[:data].lines : fd[:data]
+      inputs.map do |input|
+        data = input[:data].is_a?(String) ? input[:data].lines : input[:data]
         matches = []
 
         data.each_with_index do |line, idx|
@@ -24,13 +24,13 @@ module RegexSearch
           }
 
           # Apply insights post‑processing
-          match = fd[:insights_klass].call(fd, match)
+          match = input[:insights_klass].call(input, match)
 
           matches << match
           break if stop_at_first
         end
 
-        fd.merge(result: matches)
+        input.merge(result: matches)
       end
     end
   end
