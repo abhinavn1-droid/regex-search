@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
-  spec.name          = 'keyword_finder'
+  spec.name          = 'regex_search'
   spec.version       = '0.1.0'
-  spec.authors       = ['Your Name']
-  spec.email         = ['your.email@example.com']
+  spec.authors       = ['Abhinav Nain']
+  spec.email         = ['abhinav.n1@turing.com']
   spec.summary       = 'A simple gem to search keywords in text files'
   spec.description   = 'Reads multiple text files and searches for user-specified keywords.'
   spec.homepage      = 'https://example.com/keyword_finder'
@@ -13,4 +13,6 @@ Gem::Specification.new do |spec|
   spec.files         = Dir['lib/**/*', 'test/**/*', 'Rakefile', 'README.md']
   spec.require_paths = ['lib']
   spec.metadata['rubygems_mfa_required'] = 'true'
+  
+  spec.add_runtime_dependency 'marcel', '~> 1.0'  # For file type detection
 end

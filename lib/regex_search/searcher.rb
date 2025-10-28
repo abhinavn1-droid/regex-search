@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
+require_relative 'result'
+require_relative 'context_window'
+
 module RegexSearch
   module Searcher
     module_function
 
     def search(inputs, pattern, options = {})
+      logger = options[:logger] || Logger.new(nil)
       regex = pattern.is_a?(Regexp) ? pattern : Regexp.new(pattern)
+      context_lines = options.fetch(:context_lines, 1)
       stop_at_first = options.fetch(:stop_at_first_match, false)
 
       inputs.map do |input|
@@ -15,18 +20,18 @@ module RegexSearch
         data.each_with_index do |line, idx|
           next unless line =~ regex
 
+          before, after = ContextWindow.extract(data, idx, context_lines)
+
           match = {
             line_number: idx + 1,
             line: line.chomp,
-            context_before: data[[0, idx - 1].max],
-            context_after: data[idx + 1],
+            context_before: before,
+            context_after: after,
             captures: line.scan(regex)
           }
 
-          # Apply insights post‑processing
-          match = input[:insights_klass].call(input, match)
-
-          matches << match
+          match = InsightPipeline.run(input[:insights_klass], input, match, logger)
+          matches << Result.new(match: match, input: input)
           break if stop_at_first
         end
 

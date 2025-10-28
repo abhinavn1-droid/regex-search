@@ -1,7 +1,8 @@
 PATH
   remote: .
   specs:
-    keyword_finder (0.1.0)
+    regex_search (0.1.0)
+      marcel (~> 1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -10,6 +11,7 @@ GEM
     json (2.15.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
+    marcel (1.1.0)
     minitest (5.26.0)
     parallel (1.27.0)
     parser (3.3.10.0)
@@ -47,9 +49,9 @@ PLATFORMS
   x64-mingw-ucrt
 
 DEPENDENCIES
-  keyword_finder!
   minitest (~> 5.0)
   rake
+  regex_search!
   rubocop (~> 1.65)
   rubocop-minitest (~> 0.35)
 
