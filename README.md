@@ -25,6 +25,32 @@ options = {
 }
 ```
 
+## Documentation
+
+The project uses YARD for documentation. To generate and view the documentation:
+
+1. Install dependencies:
+   ```bash
+   bundle install
+   ```
+
+2. Generate the docs:
+   ```bash
+   yard doc
+   ```
+
+3. View in your browser:
+   ```bash
+   yard server
+   ```
+   Then visit http://localhost:8808
+
+The documentation includes:
+- Detailed API reference
+- Usage examples
+- Type information
+- Private APIs (marked with @api private)
+
 ## Directory Structure
 ```
 regex-search/

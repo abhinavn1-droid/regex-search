@@ -1,0 +1,9 @@
+--protected
+--private
+--embed-mixins
+--markup markdown
+--markup-provider redcarpet
+--readme README.md
+lib/**/*.rb
+-
+README.md

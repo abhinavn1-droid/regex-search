@@ -3,15 +3,16 @@
 
 require 'test_helper'
 
-# The library file requires the 'marcel' gem. Tests should not fail if
-# marcel is not installed, so provide a minimal stub for Marcel::MimeType
-# when marcel isn't available.
-begin
-  require 'marcel'
-rescue LoadError
-  module Marcel
-    class MimeType
-      def self.for(*)
+# Stub Marcel for tests
+module Marcel
+  class MimeType
+    def self.for(path, name: nil)
+      case File.extname(path).downcase
+      when '.json'
+        'application/json'
+      when '.txt'
+        'text/plain'
+      else
         nil
       end
     end

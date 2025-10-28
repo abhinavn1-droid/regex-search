@@ -21,6 +21,7 @@ GEM
     racc (1.8.1)
     rainbow (3.1.1)
     rake (13.3.0)
+    redcarpet (3.6.1)
     regexp_parser (2.11.3)
     rubocop (1.81.6)
       json (~> 2.3)
@@ -44,6 +45,7 @@ GEM
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.1.0)
+    yard (0.9.37)
 
 PLATFORMS
   x64-mingw-ucrt
@@ -51,9 +53,11 @@ PLATFORMS
 DEPENDENCIES
   minitest (~> 5.0)
   rake
+  redcarpet
   regex_search!
   rubocop (~> 1.65)
   rubocop-minitest (~> 0.35)
+  yard (~> 0.9.34)
 
 BUNDLED WITH
    2.7.2
