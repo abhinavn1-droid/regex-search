@@ -3,11 +3,13 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 
 ## Features
 
-- **Multiple File Format Support**: Text, JSON, YAML, PDF and more
+ **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), PDF and more
 - **Rich Context**: Get surrounding context for each match
 - **File Type Detection**: Automatic detection and appropriate handling of different file types
 - **Insights**: File type specific metadata and context enrichment
 - **PDF Support**: Full text search in PDF documents with page numbers and section context
+
+
 
 ## Usage
 
@@ -61,6 +63,40 @@ results.each do |result|
   puts "Position on page: #{context[:page_position]}" # :top, :middle, or :bottom
 end
 ```
+
+### YAML Support
+
+The gem now recognizes `.yaml` and `.yml` files and applies regex matching over their textual content. When `provide_insights: true`, YAML matches are annotated with structural context so you can locate the match inside the YAML hierarchy.
+
+Example usage:
+
+```ruby
+# Search a YAML file and get structural insights
+results = RegexSearch.find_in_file('config/sample.yaml', /admin/, provide_insights: true)
+
+results.each do |file_result|
+   file_result[:result].each do |match|
+      insights = match[:insights]
+      puts "Matched YAML path: #{insights[:yaml_path]}" # e.g. "server.database.credentials.username"
+      puts "Parent structure: #{insights[:parent_structure].inspect}"
+   end
+end
+```
+
+Notes:
+- `:yaml_path` is a dotted path representing the key path to the matched value (arrays use numeric indexes: `features.1`).
+- `:parent_structure` is the parent Hash/Array that contains the matched value (suitable for contextual extraction).
+- Invalid or malformed YAML is handled gracefully; insights will be empty rather than raising.
+
+Dependency note:
+- YAML parsing is provided via `psych` (the YAML parser used by Ruby). If your environment attempts to build native extensions for `psych` and fails, run:
+
+```powershell
+bundle config set force_ruby_platform true
+bundle install
+```
+
+This forces pure-Ruby platform gems and avoids native compilation issues on some Windows systems.
 
 ## Documentation
 
