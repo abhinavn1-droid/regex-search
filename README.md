@@ -1,5 +1,13 @@
 # regex-search
-A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`. The main objective is to understand all file formats like, text(.txt|.text), log(.log), python(.py), ruby(.rb), pdf(.pdf), markdown(.md) etc. and give the matching text with a little bit of surrounding context, line number(s) and some information about it (applicable to program files). The gem uses traditional methods of file processing to understand the files better. I will add a bunch of improvements as we move ahead with the development.
+A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`. The main objective is to understand all file formats like text(.txt|.text), log(.log), python(.py), ruby(.rb), PDF(.pdf), markdown(.md) etc. and give the matching text with a little bit of surrounding context, line number(s) and some information about it (applicable to program files). The gem uses traditional methods of file processing to understand the files better.
+
+## Features
+
+- **Multiple File Format Support**: Text, JSON, YAML, PDF and more
+- **Rich Context**: Get surrounding context for each match
+- **File Type Detection**: Automatic detection and appropriate handling of different file types
+- **Insights**: File type specific metadata and context enrichment
+- **PDF Support**: Full text search in PDF documents with page numbers and section context
 
 ## Usage
 
@@ -21,8 +29,37 @@ RegexSearch.find_in_files(collection_of_file_paths_or_objects, pattern, **option
 ```ruby
 options = {
     stop_at_first_match: false, # By default gives all matches 
-    provide_insights: true, #                    
+    provide_insights: true,     # Enable metadata and context enrichment
+    context_lines: 2           # Number of context lines before/after match
 }
+```
+
+### PDF Support
+
+When searching PDF files, the gem provides additional insights:
+
+```ruby
+# Search in a PDF file
+results = RegexSearch.find_in_file("document.pdf", /important/, provide_insights: true)
+
+# Each match includes PDF-specific metadata
+results.each do |result|
+  match = result[:result].first
+  
+  # Page information
+  page_number = match.insights[:pdf_page]
+  
+  # Document metadata
+  metadata = match.insights[:pdf_metadata]
+  puts "Title: #{metadata[:title]}"
+  puts "Author: #{metadata[:author]}"
+  puts "Total pages: #{metadata[:page_count]}"
+  
+  # Section context
+  context = match.insights[:section_context]
+  puts "Found in section: #{context[:nearest_heading]}"
+  puts "Position on page: #{context[:page_position]}" # :top, :middle, or :bottom
+end
 ```
 
 ## Documentation

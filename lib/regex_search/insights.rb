@@ -2,6 +2,7 @@
 
 require_relative 'insights/base'
 require_relative 'insights/json'
+require_relative 'insights/pdf'
 
 module RegexSearch
   # Framework for file-type specific analysis and enrichment
@@ -33,7 +34,8 @@ module RegexSearch
     # @return [Hash<Symbol, Class>] Mapping of file type to processor class
     SUPPORTED_FILE_TYPES = {
       txt: Base,   # Plain text files use base processor
-      json: Json   # JSON files get special JSON path analysis
+      json: Json,  # JSON files get special JSON path analysis
+      pdf: PDF # PDF files get page numbers and metadata
     }.freeze
   end
 end

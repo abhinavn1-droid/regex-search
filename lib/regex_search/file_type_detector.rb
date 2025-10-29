@@ -15,7 +15,8 @@ module RegexSearch
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => :docx,
       'application/msword' => :doc,
       'application/vnd.ms-excel' => :xls,
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => :xlsx
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => :xlsx,
+      'application/pdf' => :pdf
     }.freeze
 
     def self.detect(path)
@@ -34,9 +35,7 @@ module RegexSearch
     def self.detect_from_content(content)
       return :json if content.strip.start_with?('{') || content.strip.start_with?('[')
       return :yaml if content.strip.start_with?('---')
-      if content.strip.downcase.start_with?('<!doctype html') || content.strip.downcase.start_with?('<html')
-        return :html
-      end
+      return :html if content.strip.downcase.start_with?('<!doctype html') || content.strip.downcase.start_with?('<html')
       return :xml if content.strip.downcase.start_with?('<?xml')
 
       :txt
