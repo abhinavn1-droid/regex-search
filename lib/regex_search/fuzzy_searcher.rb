@@ -114,14 +114,15 @@ module RegexSearch
         end
       end
 
-  # For each line, only keep the single best match (earliest if tie)
-  return [] if matches.empty?
-  best_distance = matches.map { |m| m[:distance] }.min
-  return [] unless best_distance && best_distance <= max_distance
+      # For each line, only keep the single best match (earliest if tie)
+      return [] if matches.empty?
 
-  best_matches = matches.select { |m| m[:distance] == best_distance }
-  best_match = best_matches.min_by { |m| m[:position] || 0 }
-  [best_match]
+      best_distance = matches.map { |m| m[:distance] }.min
+      return [] unless best_distance && best_distance <= max_distance
+
+      best_matches = matches.select { |m| m[:distance] == best_distance }
+      best_match = best_matches.min_by { |m| m[:position] || 0 }
+      [best_match]
     end
 
     # Create a Result object from match data

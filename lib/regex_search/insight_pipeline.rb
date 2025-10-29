@@ -67,9 +67,7 @@ module RegexSearch
       match[:tags] = []
       match[:tags] << :contains_number if match[:line] =~ /\d/
       match[:tags] << :contains_url if match[:line] =~ %r{https?://}
-      if match[:line] =~ /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i
-        match[:tags] << :contains_email
-      end
+      match[:tags] << :contains_email if match[:line] =~ /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i
       logger&.debug("Annotate: added tags #{match[:tags]}")
       match
     end

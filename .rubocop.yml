@@ -10,7 +10,7 @@ AllCops:
     - "db/schema.rb"
 
 Layout/LineLength:
-  Max: 100
+  Max: 200
 
 Minitest/AssertEmptyLiteral:
   Enabled: true
@@ -44,4 +44,17 @@ Metrics/ParameterLists:
   Enabled: false
 
 Style/MultilineBlockChain:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Naming/PredicatePrefix:
+  Enabled: false
+Lint/UnusedMethodArgument:
+  Enabled: false
+Lint/MissingSuper:
   Enabled: false

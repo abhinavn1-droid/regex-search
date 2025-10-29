@@ -57,7 +57,8 @@ module RegexSearch
         # adjacent matches to be selected when the keyword appears only in
         # the neighboring line. Tests expect filtering to match the line
         # containing the keyword, not matches whose context contains it.
-        return false unless match && match.line
+        return false unless match&.line
+
         match.line.include?(keyword)
       end
 
