@@ -16,7 +16,8 @@ module RegexSearch
       'application/msword' => :doc,
       'application/vnd.ms-excel' => :xls,
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => :xlsx,
-      'application/pdf' => :pdf
+      'application/pdf' => :pdf,
+      'text/csv' => :csv
     }.freeze
 
     def self.detect(path)

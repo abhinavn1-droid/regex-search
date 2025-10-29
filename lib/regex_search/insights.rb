@@ -4,6 +4,7 @@ require_relative 'insights/base'
 require_relative 'insights/json'
 require_relative 'insights/pdf'
 require_relative 'insights/yaml'
+require_relative 'insights/csv'
 
 module RegexSearch
   # Framework for file-type specific analysis and enrichment
@@ -38,7 +39,8 @@ module RegexSearch
       json: Json,  # JSON files get special JSON path analysis
       pdf: PDF,    # PDF files get page numbers and metadata
       yaml: Yaml,  # YAML files get structure and path analysis
-      yml: Yaml    # Alternative extension for YAML files
+      yml: Yaml,   # Alternative extension for YAML files
+      csv: Csv     # CSV files get row and column context
     }.freeze
   end
 end

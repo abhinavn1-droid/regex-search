@@ -3,11 +3,12 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 
 ## Features
 
- **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), PDF and more
+ **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, PDF and more
 - **Rich Context**: Get surrounding context for each match
 - **File Type Detection**: Automatic detection and appropriate handling of different file types
 - **Insights**: File type specific metadata and context enrichment
 - **PDF Support**: Full text search in PDF documents with page numbers and section context
+- **CSV Support**: Full text search in CSV files with row and column context
 
 
 
@@ -87,6 +88,36 @@ Notes:
 - `:yaml_path` is a dotted path representing the key path to the matched value (arrays use numeric indexes: `features.1`).
 - `:parent_structure` is the parent Hash/Array that contains the matched value (suitable for contextual extraction).
 - Invalid or malformed YAML is handled gracefully; insights will be empty rather than raising.
+
+### CSV Support
+
+The gem recognizes `.csv` files and applies regex matching over their content. When `provide_insights: true`, CSV matches are annotated with row and column metadata including symbolic paths.
+
+Example usage:
+
+```ruby
+# Search a CSV file and get row/column context
+results = RegexSearch.find_in_file('data/users.csv', /john@example\.com/, provide_insights: true)
+
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    puts "Row Index: #{insights[:row_index]}"           # e.g. 0 (zero-based, excluding headers)
+    puts "Column Name: #{insights[:column_name]}"       # e.g. "email" (if headers exist)
+    puts "Column Index: #{insights[:column_index]}"     # e.g. 1 (zero-based)
+    puts "CSV Path: #{insights[:csv_path]}"             # e.g. 'data[0]["email"]'
+    puts "Row Data: #{insights[:row_data].inspect}"     # Full row as Hash (with headers) or Array
+    puts "Has Headers: #{insights[:has_headers]}"       # true/false
+  end
+end
+```
+
+Notes:
+- `:csv_path` is a symbolic path to the matched cell. Format is `data[row_index]["column_name"]` for CSV with headers, or `data[row_index][column_index]` for headerless CSV.
+- `:row_data` returns the full row as a Hash (with column names as keys) if headers are detected, or as an Array otherwise.
+- `:has_headers` indicates whether the CSV was detected to have a header row.
+- The gem automatically detects headers using heuristics (checks if first row contains non-numeric values).
+- Malformed CSV is handled gracefully with error messages in insights rather than raising exceptions.
 
 Dependency note:
 - YAML parsing is provided via `psych` (the YAML parser used by Ruby). If your environment attempts to build native extensions for `psych` and fails, run:
