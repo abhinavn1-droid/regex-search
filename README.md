@@ -3,12 +3,13 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 
 ## Features
 
- **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, PDF and more
+ **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, PDF and more
 - **Rich Context**: Get surrounding context for each match
 - **File Type Detection**: Automatic detection and appropriate handling of different file types
 - **Insights**: File type specific metadata and context enrichment
 - **PDF Support**: Full text search in PDF documents with page numbers and section context
 - **CSV Support**: Full text search in CSV files with row and column context
+- **Markup Support**: Full text search in HTML/XML files with element paths and structure
 
 
 
@@ -118,6 +119,46 @@ Notes:
 - `:has_headers` indicates whether the CSV was detected to have a header row.
 - The gem automatically detects headers using heuristics (checks if first row contains non-numeric values).
 - Malformed CSV is handled gracefully with error messages in insights rather than raising exceptions.
+
+### HTML/XML Support
+
+The gem recognizes `.html` and `.xml` files and provides structural context for matches. When `provide_insights: true`, markup matches include element paths, attributes, and parent context.
+
+Example usage:
+
+```ruby
+# Search an HTML file
+results = RegexSearch.find_in_file('page.html', /contact@example\.com/, provide_insights: true)
+
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    puts "Element: #{insights[:element_tag]}"          # e.g. "p"
+    puts "CSS Path: #{insights[:css_path]}"            # e.g. "div.user > p.email"
+    puts "XPath: #{insights[:xpath]}"                  # e.g. "//div[@class='user']/p"
+    puts "Attributes: #{insights[:element_attributes]}" # e.g. {"class"=>"email"}
+    puts "Parent: #{insights[:parent_tag]}"            # e.g. "div"
+  end
+end
+
+# Search an XML file
+results = RegexSearch.find_in_file('config.xml', /production/, provide_insights: true)
+
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    puts "Element: #{insights[:element_tag]}"
+    puts "XPath: #{insights[:xpath]}"
+    puts "Namespaces: #{insights[:namespaces]}"
+  end
+end
+```
+
+Notes:
+- HTML insights include CSS selector paths and XPath for easy element location
+- XML insights include XPath, namespaces, and element attributes
+- Both provide parent element context and attributes
+- Malformed markup is handled gracefully with error messages
 
 Dependency note:
 - YAML parsing is provided via `psych` (the YAML parser used by Ruby). If your environment attempts to build native extensions for `psych` and fails, run:
