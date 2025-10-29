@@ -3,13 +3,14 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 
 ## Features
 
- **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, PDF and more
+ **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Excel (XLSX/XLS), PDF and more
 - **Rich Context**: Get surrounding context for each match
 - **File Type Detection**: Automatic detection and appropriate handling of different file types
 - **Insights**: File type specific metadata and context enrichment
 - **PDF Support**: Full text search in PDF documents with page numbers and section context
 - **CSV Support**: Full text search in CSV files with row and column context
 - **Markup Support**: Full text search in HTML/XML files with element paths and structure
+- **Excel Support**: Full text search in Excel spreadsheets with sheet and cell context
 
 
 
@@ -159,6 +160,37 @@ Notes:
 - XML insights include XPath, namespaces, and element attributes
 - Both provide parent element context and attributes
 - Malformed markup is handled gracefully with error messages
+
+### Excel Support
+
+The gem recognizes `.xlsx` and `.xls` files and provides spreadsheet context for matches. When `provide_insights: true`, Excel matches include sheet names, cell references, and row/column metadata.
+
+Example usage:
+
+```ruby
+# Search an Excel file
+results = RegexSearch.find_in_file('data.xlsx', /john@example\.com/, provide_insights: true)
+
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    puts "Sheet: #{insights[:sheet_name]}"           # e.g. "Users"
+    puts "Cell: #{insights[:cell_reference]}"        # e.g. "Users!B2"
+    puts "Row: #{insights[:row_index]}"              # e.g. 0 (zero-based, excluding headers)
+    puts "Column: #{insights[:column_header]}"       # e.g. "Email"
+    puts "Path: #{insights[:excel_path]}"            # e.g. 'workbook["Users"][0]["Email"]'
+    puts "Row Data: #{insights[:row_data]}"          # Full row as Hash or Array
+  end
+end
+```
+
+Notes:
+- `:excel_path` is a symbolic path to the matched cell. Format is `workbook["SheetName"][row_index]["ColumnHeader"]` for sheets with headers, or `workbook["SheetName"][row_index][column_index]` for headerless sheets.
+- `:cell_reference` provides standard Excel notation (e.g., "Sheet1!B2")
+- `:row_data` returns the full row as a Hash (with headers) or Array (without)
+- Searches across all sheets in the workbook
+- Automatic header detection using row pattern analysis
+- Supports both `.xlsx` and `.xls` formats
 
 Dependency note:
 - YAML parsing is provided via `psych` (the YAML parser used by Ruby). If your environment attempts to build native extensions for `psych` and fails, run:
