@@ -3,6 +3,7 @@
 require_relative 'insights/base'
 require_relative 'insights/json'
 require_relative 'insights/pdf'
+require_relative 'insights/yaml'
 
 module RegexSearch
   # Framework for file-type specific analysis and enrichment
@@ -35,7 +36,9 @@ module RegexSearch
     SUPPORTED_FILE_TYPES = {
       txt: Base,   # Plain text files use base processor
       json: Json,  # JSON files get special JSON path analysis
-      pdf: PDF # PDF files get page numbers and metadata
+      pdf: PDF,    # PDF files get page numbers and metadata
+      yaml: Yaml,  # YAML files get structure and path analysis
+      yml: Yaml    # Alternative extension for YAML files
     }.freeze
   end
 end
