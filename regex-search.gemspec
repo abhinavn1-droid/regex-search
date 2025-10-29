@@ -17,4 +17,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'marcel', '~> 1.0' # For file type detection
   spec.add_dependency 'pdf-reader', '~> 2.11' # For PDF text extraction and metadata
   spec.add_dependency 'psych', '~> 5.1' # For YAML parsing
+  spec.add_dependency 'nokogiri', '~> 1.16' # For HTML/XML parsing
 end
