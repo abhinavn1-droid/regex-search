@@ -15,4 +15,5 @@ Gem::Specification.new do |spec|
   spec.metadata['rubygems_mfa_required'] = 'true'
 
   spec.add_dependency 'marcel', '~> 1.0' # For file type detection
+  spec.add_dependency 'pdf-reader', '~> 2.11' # For PDF text extraction and metadata
 end

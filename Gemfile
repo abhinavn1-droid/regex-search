@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 
 group :development, :test do
   gem 'minitest', '~> 5.0'
+  gem 'prawn', '~> 2.4'
   gem 'rake'
   gem 'redcarpet'
   gem 'rubocop', '~> 1.65' # latest stable series

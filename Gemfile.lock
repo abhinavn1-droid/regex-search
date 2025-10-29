@@ -3,20 +3,37 @@ PATH
   specs:
     regex_search (0.1.0)
       marcel (~> 1.0)
+      pdf-reader (~> 2.11)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    Ascii85 (2.0.1)
+    afm (1.0.0)
     ast (2.4.3)
+    bigdecimal (3.3.1)
+    hashery (2.1.2)
     json (2.15.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     marcel (1.1.0)
+    matrix (0.4.3)
     minitest (5.26.0)
     parallel (1.27.0)
     parser (3.3.10.0)
       ast (~> 2.4.1)
       racc
+    pdf-core (0.10.0)
+    pdf-reader (2.15.0)
+      Ascii85 (>= 1.0, < 3.0, != 2.0.0)
+      afm (>= 0.2.1, < 2)
+      hashery (~> 2.0)
+      ruby-rc4
+      ttfunk
+    prawn (2.5.0)
+      matrix (~> 0.4)
+      pdf-core (~> 0.10.0)
+      ttfunk (~> 1.8)
     prism (1.6.0)
     racc (1.8.1)
     rainbow (3.1.1)
@@ -42,6 +59,9 @@ GEM
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.38.0, < 2.0)
     ruby-progressbar (1.13.0)
+    ruby-rc4 (0.1.5)
+    ttfunk (1.8.0)
+      bigdecimal (~> 3.1)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.1.0)
@@ -52,6 +72,7 @@ PLATFORMS
 
 DEPENDENCIES
   minitest (~> 5.0)
+  prawn (~> 2.4)
   rake
   redcarpet
   regex_search!
