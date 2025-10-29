@@ -11,6 +11,7 @@ group :development, :test do
   gem 'rubocop', '~> 1.65' # latest stable series
   gem 'rubocop-minitest', '~> 0.35' # optional, for Minitest cops
   gem 'yard', '~> 0.9.34' # for documentation
+  gem 'caxlsx', '~> 4.1' # for creating test Excel files
 end
 
 gemspec
