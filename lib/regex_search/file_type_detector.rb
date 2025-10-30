@@ -12,6 +12,8 @@ module RegexSearch
       'application/xml' => :xml,
       'text/html' => :html,
       'text/x-python' => :py,
+      'text/x-ruby' => :rb,
+      'application/x-ruby' => :rb,
       'text/css' => :css,
       'application/rtf' => :rtf,
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => :docx,
