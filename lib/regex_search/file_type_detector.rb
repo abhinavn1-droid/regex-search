@@ -11,6 +11,7 @@ module RegexSearch
       'text/yaml' => :yaml,
       'application/xml' => :xml,
       'text/html' => :html,
+      'text/css' => :css,
       'application/rtf' => :rtf,
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => :docx,
       'application/msword' => :doc,
