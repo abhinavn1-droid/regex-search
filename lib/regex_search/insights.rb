@@ -11,6 +11,7 @@ require_relative 'insights/excel'
 require_relative 'insights/markdown'
 require_relative 'insights/word'
 require_relative 'insights/rtf'
+require_relative 'insights/msg'
 
 module RegexSearch
   # Framework for file-type specific analysis and enrichment
@@ -55,7 +56,8 @@ module RegexSearch
       markdown: Markdown,  # Alternative extension for Markdown files
       docx: Word,      # Word documents get section and paragraph context
       doc: Word,       # Legacy Word documents get section and paragraph context
-      rtf: Rtf         # RTF documents get section and paragraph context
+      rtf: Rtf,        # RTF documents get section and paragraph context
+      msg: Msg         # MSG email messages get sender, recipients, and location context
     }.freeze
   end
 end
