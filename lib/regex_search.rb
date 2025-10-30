@@ -64,6 +64,8 @@ module RegexSearch
     # @param options [Hash] Additional options to pass to the searcher
     # @option options [Integer] :context_lines (1) Number of context lines to include
     # @option options [Boolean] :stop_at_first_match (false) Stop after first match
+    # @option options [String, Hash] :pdf_password Password for encrypted PDFs.
+    #   Can be a single string or a hash mapping file paths to passwords
     #
     # @raise [Errors::MalformedInputError] If input format is invalid for the mode
     # @raise [Errors::FileReadError] If a file cannot be read
@@ -80,9 +82,18 @@ module RegexSearch
     #     pattern: /important/,
     #     mode: 'find_in_files'
     #   )
+    #
+    # @example Search in encrypted PDF
+    #   runner = RegexSearch::Runner.new(
+    #     input: "encrypted.pdf",
+    #     pattern: /confidential/,
+    #     mode: 'find_in_file',
+    #     pdf_password: 'secret123'
+    #   )
     def initialize(input: nil, pattern: nil, mode: 'find', verbose: false, **options)
       @logger = Logger.new($stdout)
       @logger.level = verbose ? Logger::DEBUG : Logger::WARN
+      @pdf_password = options.delete(:pdf_password)
 
       inputs = process_input(input, mode)
       if mode == 'fuzzy'
@@ -149,19 +160,74 @@ module RegexSearch
         path = item.is_a?(File) ? item.path : item
         raise Errors::MalformedInputError, "Invalid file or path: #{path}" unless File.file?(path)
 
+        filetype = FileTypeDetector.detect(path)
+        klass = Insights::SUPPORTED_FILE_TYPES[filetype] || Insights::Base
+        @logger.debug("Detected file type: .#{filetype}, using #{klass}")
+
+        # Add password support for PDFs
+        password = get_password_for_file(path)
+
         begin
-          data = item.is_a?(File) ? item.tap(&:rewind) : File.read(path)
+          # Extract text for binary formats (PDF)
+          if filetype == :pdf
+            data = extract_pdf_text(path, password)
+          else
+            data = item.is_a?(File) ? item.tap(&:rewind) : File.read(path)
+          end
         rescue StandardError => e
           raise Errors::FileReadError, "Failed to read file #{path}: #{e.message}"
         end
 
-        filetype = FileTypeDetector.detect(path) # Fixed: was current_input[:path]
-        klass = Insights::SUPPORTED_FILE_TYPES[filetype] || Insights::Base
-        @logger.debug("Detected file type: .#{filetype}, using #{klass}") # Fixed: was ext
-
-        inputs << { data:, path:, filetype:, insights_klass: klass }
+        inputs << { data:, path:, filetype:, insights_klass: klass, password: }
       end
       inputs
+    end
+
+    # Gets the password for a given file path
+    #
+    # @api private
+    # @param path [String] File path
+    # @return [String, nil] Password for the file, if configured
+    def get_password_for_file(path)
+      return nil unless @pdf_password
+
+      if @pdf_password.is_a?(Hash)
+        @pdf_password[path] || @pdf_password[File.basename(path)]
+      else
+        @pdf_password
+      end
+    end
+
+    # Extracts text from a PDF file
+    #
+    # @api private
+    # @param path [String] Path to the PDF file
+    # @param password [String, nil] Optional password for encrypted PDFs
+    # @return [String] Extracted text from all pages
+    # @raise [Errors::FileReadError] If PDF cannot be read
+    def extract_pdf_text(path, password)
+      require 'pdf-reader'
+      
+      opts = {}
+      opts[:password] = password if password
+      reader = ::PDF::Reader.new(path, opts)
+      
+      text = []
+      1.upto(reader.page_count) do |page_num|
+        begin
+          page = reader.page(page_num)
+          page_text = page.text
+          text << page_text.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+        rescue StandardError => e
+          @logger.warn("Error extracting page #{page_num} from #{path}: #{e.message}")
+        end
+      end
+      
+      text.join("\n")
+    rescue ::PDF::Reader::EncryptedPDFError => e
+      raise Errors::FileReadError, "PDF is encrypted and requires a password: #{e.message}"
+    rescue StandardError => e
+      raise Errors::FileReadError, "Failed to extract text from PDF #{path}: #{e.message}"
     end
   end
 end

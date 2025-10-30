@@ -2,6 +2,7 @@
 
 require_relative 'result'
 require_relative 'context_window'
+require_relative 'insight_pipeline'
 
 module RegexSearch
   # The Searcher module provides the core search functionality for RegexSearch.

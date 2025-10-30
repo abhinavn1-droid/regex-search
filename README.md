@@ -71,6 +71,64 @@ results.each do |result|
 end
 ```
 
+#### Encrypted PDF Support
+
+The gem supports searching password-protected (encrypted) PDF documents. You can provide passwords either as a single string for all PDFs or as a hash mapping specific files to their passwords.
+
+Example usage:
+
+```ruby
+# Search a single encrypted PDF with password
+results = RegexSearch.find_in_file(
+  "confidential.pdf",
+  /sensitive/,
+  provide_insights: true,
+  pdf_password: 'secret123'
+)
+
+# Search multiple PDFs with different passwords
+results = RegexSearch.find_in_files(
+  ["public.pdf", "private1.pdf", "private2.pdf"],
+  /important/,
+  provide_insights: true,
+  pdf_password: {
+    "private1.pdf" => "password1",
+    "private2.pdf" => "password2"
+    # public.pdf has no password
+  }
+)
+
+# Check encryption status in insights
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    
+    # Encryption metadata
+    puts "Encrypted: #{insights[:encrypted]}"           # true/false
+    puts "Decryptable: #{insights[:decryptable]}"       # true/false
+    puts "Password provided: #{insights[:password_provided]}" # true/false
+    
+    # If decryption failed
+    if insights[:error]
+      puts "Error: #{insights[:error]}"                 # e.g. "PDF is encrypted"
+      puts "Reason: #{insights[:reason]}"               # e.g. "missing_password", "wrong_password"
+    end
+    
+    # Standard PDF insights (when decryption succeeds)
+    puts "Page: #{insights[:pdf_page]}" if insights[:pdf_page]
+    puts "Metadata: #{insights[:pdf_metadata]}" if insights[:pdf_metadata]
+  end
+end
+```
+
+Notes:
+- `:encrypted` indicates whether the PDF has encryption enabled
+- `:decryptable` indicates whether the content could be accessed (either not encrypted or successfully decrypted)
+- When decryption fails, the match will include an `:error` field describing the issue
+- Possible `:reason` values: `"missing_password"`, `"wrong_password"`, or `"unsupported_encryption"`
+- The gem uses the `pdf-reader` library's encryption handling under the hood
+- If no password is provided for an encrypted PDF, you'll receive a clear error message rather than a crash
+
 ### YAML Support
 
 The gem now recognizes `.yaml` and `.yml` files and applies regex matching over their textual content. When `provide_insights: true`, YAML matches are annotated with structural context so you can locate the match inside the YAML hierarchy.

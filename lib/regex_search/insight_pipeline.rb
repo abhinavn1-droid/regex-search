@@ -45,8 +45,15 @@ module RegexSearch
     # @param logger [Logger, nil] Optional logger
     # @return [Hash] The normalized match
     def self.preprocess(_, match, logger)
-      match[:line] = match[:line].strip
-      match[:captures] = match[:captures].map { |group| group.map(&:strip) }
+      match[:line] = match[:line].strip if match[:line].respond_to?(:strip)
+      
+      # Handle captures - ensure it's an array of arrays
+      if match[:captures].is_a?(Array)
+        match[:captures] = match[:captures].map do |group|
+          group.is_a?(Array) ? group.map(&:strip) : [group.to_s.strip]
+        end
+      end
+      
       logger&.debug('Preprocess: normalized line and captures')
       match
     end
