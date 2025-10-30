@@ -8,6 +8,7 @@ require_relative 'insights/csv'
 require_relative 'insights/html'
 require_relative 'insights/xml'
 require_relative 'insights/css'
+require_relative 'insights/python'
 require_relative 'insights/excel'
 require_relative 'insights/markdown'
 require_relative 'insights/word'
@@ -51,6 +52,7 @@ module RegexSearch
       csv: Csv,        # CSV files get row and column context
       html: Html,      # HTML files get element paths and structure
       css: Css,        # CSS files get selector and declaration context
+      py: Python,      # Python source files get container and code context
       xml: Xml,        # XML files get element paths and namespaces
       xlsx: Excel,     # Excel files get sheet and cell context
       xls: Excel,      # Legacy Excel files get sheet and cell context
