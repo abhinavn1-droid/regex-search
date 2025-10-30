@@ -8,6 +8,7 @@ require_relative 'insights/csv'
 require_relative 'insights/html'
 require_relative 'insights/xml'
 require_relative 'insights/excel'
+require_relative 'insights/markdown'
 
 module RegexSearch
   # Framework for file-type specific analysis and enrichment
@@ -38,16 +39,18 @@ module RegexSearch
     # @api private
     # @return [Hash<Symbol, Class>] Mapping of file type to processor class
     SUPPORTED_FILE_TYPES = {
-      txt: Base,    # Plain text files use base processor
-      json: Json,   # JSON files get special JSON path analysis
-      pdf: PDF,     # PDF files get page numbers and metadata
-      yaml: Yaml,   # YAML files get structure and path analysis
-      yml: Yaml,    # Alternative extension for YAML files
-      csv: Csv,     # CSV files get row and column context
-      html: Html,   # HTML files get element paths and structure
-      xml: Xml,     # XML files get element paths and namespaces
-      xlsx: Excel,  # Excel files get sheet and cell context
-      xls: Excel    # Legacy Excel files get sheet and cell context
+      txt: Base,       # Plain text files use base processor
+      json: Json,      # JSON files get special JSON path analysis
+      pdf: PDF,        # PDF files get page numbers and metadata
+      yaml: Yaml,      # YAML files get structure and path analysis
+      yml: Yaml,       # Alternative extension for YAML files
+      csv: Csv,        # CSV files get row and column context
+      html: Html,      # HTML files get element paths and structure
+      xml: Xml,        # XML files get element paths and namespaces
+      xlsx: Excel,     # Excel files get sheet and cell context
+      xls: Excel,      # Legacy Excel files get sheet and cell context
+      md: Markdown,    # Markdown files get heading and block context
+      markdown: Markdown  # Alternative extension for Markdown files
     }.freeze
   end
 end
