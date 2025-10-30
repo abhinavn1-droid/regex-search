@@ -3,13 +3,14 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 
 ## Features
 
- **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Excel (XLSX/XLS), PDF and more
+ **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Markdown, Excel (XLSX/XLS), PDF and more
 - **Rich Context**: Get surrounding context for each match
 - **File Type Detection**: Automatic detection and appropriate handling of different file types
 - **Insights**: File type specific metadata and context enrichment
 - **PDF Support**: Full text search in PDF documents with page numbers and section context
 - **CSV Support**: Full text search in CSV files with row and column context
 - **Markup Support**: Full text search in HTML/XML files with element paths and structure
+- **Markdown Support**: Full text search in Markdown files with heading hierarchy and block context
 - **Excel Support**: Full text search in Excel spreadsheets with sheet and cell context
 
 
@@ -192,6 +193,36 @@ Notes:
 - Automatic header detection using row pattern analysis
 - Supports both `.xlsx` and `.xls` formats
 
+### Markdown Support
+
+The gem recognizes `.md` and `.markdown` files and provides structural context for matches. When `provide_insights: true`, Markdown matches include heading hierarchy, block types, and section paths.
+
+Example usage:
+
+```ruby
+# Search a Markdown file
+results = RegexSearch.find_in_file('README.md', /installation/, provide_insights: true)
+
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    puts "Heading: #{insights[:current_heading]}"     # e.g. "Getting Started"
+    puts "Level: #{insights[:heading_level]}"         # e.g. 2
+    puts "Path: #{insights[:heading_path]}"           # e.g. ["Documentation", "Getting Started"]
+    puts "Block: #{insights[:block_type]}"            # e.g. "code_block", "paragraph", "list"
+    puts "Line Type: #{insights[:line_type]}"         # e.g. "code", "text", "heading"
+  end
+end
+```
+
+Notes:
+- `:heading_path` shows the full hierarchy of headings leading to the match
+- `:block_type` identifies the Markdown construct (paragraph, code_block, list, blockquote, etc.)
+- `:line_type` specifies the exact line type (text, code, heading, list_item, etc.)
+- `:code_language` is provided for code blocks (e.g., "ruby", "bash")
+- `:list_level` indicates nesting depth for list items
+- Supports all standard Markdown elements (headings, code blocks, lists, blockquotes, horizontal rules)
+
 Dependency note:
 - YAML parsing is provided via `psych` (the YAML parser used by Ruby). If your environment attempts to build native extensions for `psych` and fails, run:
 
@@ -238,9 +269,12 @@ regex-search/
 ├── .rubocop.yml
 │
 ├── lib/
-│   ├── regex_search.rb
+│   ├── regex_search.rb New way 
 │   └── regex_search/
-│       ├── searcher.rb
+|       ├── runner merge the search and runner
+|             ├── base.rb -> add old runner changes here as is.
+|             ├── content.rb -> add searcher changes here.
+│       ├── runner.rb -> Init from here a base on mode select correct class child class for processing the request.
 │       ├── insights.rb
 │       └── insights/
 │           ├── base.rb
