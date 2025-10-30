@@ -20,4 +20,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'nokogiri', '~> 1.16' # For HTML/XML parsing
   spec.add_dependency 'roo', '~> 2.10' # For Excel spreadsheet parsing
   spec.add_dependency 'docx', '~> 0.8' # For Word document parsing
+  spec.add_dependency 'rtf', '~> 0.3' # For RTF document parsing
 end

@@ -3,7 +3,7 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 
 ## Features
 
- **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Markdown, Word (DOC/DOCX), Excel (XLSX/XLS), PDF and more
+ **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Markdown, Word (DOC/DOCX), RTF, Excel (XLSX/XLS), PDF and more
 - **Rich Context**: Get surrounding context for each match
 - **File Type Detection**: Automatic detection and appropriate handling of different file types
 - **Insights**: File type specific metadata and context enrichment
@@ -12,6 +12,7 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 - **Markup Support**: Full text search in HTML/XML files with element paths and structure
 - **Markdown Support**: Full text search in Markdown files with heading hierarchy and block context
 - **Word Support**: Full text search in Word documents with section and paragraph context
+- **RTF Support**: Full text search in RTF documents with section and formatting context
 - **Excel Support**: Full text search in Excel spreadsheets with sheet and cell context
 
 
@@ -253,6 +254,36 @@ Notes:
 - `:word_path` provides a symbolic path to the paragraph
 - `:paragraph_text` contains the full paragraph text
 - Supports both `.docx` (modern) and `.doc` (legacy) formats
+
+### RTF Document Support
+
+The gem recognizes `.rtf` (Rich Text Format) files and provides document structure context for matches. When `provide_insights: true`, RTF matches include section indices, paragraph indices, and formatting metadata.
+
+Example usage:
+
+```ruby
+# Search an RTF document
+results = RegexSearch.find_in_file('report.rtf', /conclusion/, provide_insights: true)
+
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    puts "Section: #{insights[:rtf_section]}"        # e.g. 2
+    puts "Paragraph: #{insights[:rtf_paragraph]}"    # e.g. 3
+    puts "Style: #{insights[:rtf_style]}"            # e.g. "bold", "Heading 2"
+    puts "Path: #{insights[:rtf_path]}"              # e.g. "section[2].paragraph[3]"
+    puts "Text: #{insights[:paragraph_text]}"        # Full paragraph text
+  end
+end
+```
+
+Notes:
+- `:rtf_section` shows the section index based on document structure
+- `:rtf_paragraph` is the zero-based paragraph index
+- `:rtf_style` indicates formatting (bold, italic, Heading 1-6, Normal, etc.)
+- `:rtf_path` provides a symbolic path like `section[2].paragraph[3]`
+- `:paragraph_text` contains the full paragraph text
+- RTF format stores text with control words that are parsed for structure
 
 Dependency note:
 - YAML parsing is provided via `psych` (the YAML parser used by Ruby). If your environment attempts to build native extensions for `psych` and fails, run:
