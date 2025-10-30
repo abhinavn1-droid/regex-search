@@ -21,5 +21,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'roo', '~> 2.10' # For Excel spreadsheet parsing
   spec.add_dependency 'docx', '~> 0.8' # For Word document parsing
   spec.add_dependency 'rtf', '~> 0.3' # For RTF document parsing
-  spec.add_dependency 'ruby-msg', '~> 1.5' # For MSG email message parsing
 end
