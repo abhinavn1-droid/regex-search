@@ -3,7 +3,7 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 
 ## Features
 
- **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Markdown, Excel (XLSX/XLS), PDF and more
+ **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Markdown, Word (DOC/DOCX), Excel (XLSX/XLS), PDF and more
 - **Rich Context**: Get surrounding context for each match
 - **File Type Detection**: Automatic detection and appropriate handling of different file types
 - **Insights**: File type specific metadata and context enrichment
@@ -11,6 +11,7 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 - **CSV Support**: Full text search in CSV files with row and column context
 - **Markup Support**: Full text search in HTML/XML files with element paths and structure
 - **Markdown Support**: Full text search in Markdown files with heading hierarchy and block context
+- **Word Support**: Full text search in Word documents with section and paragraph context
 - **Excel Support**: Full text search in Excel spreadsheets with sheet and cell context
 
 
@@ -222,6 +223,36 @@ Notes:
 - `:code_language` is provided for code blocks (e.g., "ruby", "bash")
 - `:list_level` indicates nesting depth for list items
 - Supports all standard Markdown elements (headings, code blocks, lists, blockquotes, horizontal rules)
+
+### Word Document Support
+
+The gem recognizes `.doc` and `.docx` files and provides document structure context for matches. When `provide_insights: true`, Word matches include section headings, paragraph indices, and style information.
+
+Example usage:
+
+```ruby
+# Search a Word document
+results = RegexSearch.find_in_file('report.docx', /conclusion/, provide_insights: true)
+
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    puts "Section: #{insights[:word_section]}"        # e.g. "Introduction"
+    puts "Paragraph: #{insights[:word_paragraph]}"    # e.g. 4
+    puts "Style: #{insights[:word_style]}"            # e.g. "Heading 1", "Normal"
+    puts "Path: #{insights[:word_path]}"              # e.g. "Section[1].Paragraph[4]"
+    puts "Text: #{insights[:paragraph_text]}"         # Full paragraph text
+  end
+end
+```
+
+Notes:
+- `:word_section` shows the current or most recent heading
+- `:word_paragraph` is the zero-based paragraph index
+- `:word_style` indicates the paragraph style (Heading 1-6, Normal, Quote, etc.)
+- `:word_path` provides a symbolic path to the paragraph
+- `:paragraph_text` contains the full paragraph text
+- Supports both `.docx` (modern) and `.doc` (legacy) formats
 
 Dependency note:
 - YAML parsing is provided via `psych` (the YAML parser used by Ruby). If your environment attempts to build native extensions for `psych` and fails, run:
