@@ -9,6 +9,7 @@ require_relative 'insights/html'
 require_relative 'insights/xml'
 require_relative 'insights/excel'
 require_relative 'insights/markdown'
+require_relative 'insights/word'
 
 module RegexSearch
   # Framework for file-type specific analysis and enrichment
@@ -50,7 +51,9 @@ module RegexSearch
       xlsx: Excel,     # Excel files get sheet and cell context
       xls: Excel,      # Legacy Excel files get sheet and cell context
       md: Markdown,    # Markdown files get heading and block context
-      markdown: Markdown  # Alternative extension for Markdown files
+      markdown: Markdown,  # Alternative extension for Markdown files
+      docx: Word,      # Word documents get section and paragraph context
+      doc: Word        # Legacy Word documents get section and paragraph context
     }.freeze
   end
 end

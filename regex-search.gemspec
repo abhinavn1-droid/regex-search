@@ -19,4 +19,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'psych', '~> 5.1' # For YAML parsing
   spec.add_dependency 'nokogiri', '~> 1.16' # For HTML/XML parsing
   spec.add_dependency 'roo', '~> 2.10' # For Excel spreadsheet parsing
+  spec.add_dependency 'docx', '~> 0.8' # For Word document parsing
 end
