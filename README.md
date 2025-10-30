@@ -3,7 +3,7 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 
 ## Features
 
- **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Markdown, Word (DOC/DOCX), RTF, Excel (XLSX/XLS), PDF and more
+ **Multiple File Format Support**: Text, JSON, YAML (.yaml|.yml), CSV, HTML, XML, Markdown, Word (DOC/DOCX), RTF, MSG (Outlook Email), Excel (XLSX/XLS), PDF and more
 - **Rich Context**: Get surrounding context for each match
 - **File Type Detection**: Automatic detection and appropriate handling of different file types
 - **Insights**: File type specific metadata and context enrichment
@@ -13,6 +13,7 @@ A light weight ruby gem to search for a given regex pattern basically a `CTRL+F`
 - **Markdown Support**: Full text search in Markdown files with heading hierarchy and block context
 - **Word Support**: Full text search in Word documents with section and paragraph context
 - **RTF Support**: Full text search in RTF documents with section and formatting context
+- **MSG Support**: Full text search in Outlook email messages with sender, recipients, and location context
 - **Excel Support**: Full text search in Excel spreadsheets with sheet and cell context
 
 
@@ -284,6 +285,39 @@ Notes:
 - `:rtf_path` provides a symbolic path like `section[2].paragraph[3]`
 - `:paragraph_text` contains the full paragraph text
 - RTF format stores text with control words that are parsed for structure
+
+### MSG Email Message Support
+
+The gem recognizes `.msg` (Microsoft Outlook email message) files and provides email metadata context for matches. When `provide_insights: true`, MSG matches include sender, recipients, subject, date, and location information.
+
+Example usage:
+
+```ruby
+# Search an MSG email message
+results = RegexSearch.find_in_file('important.msg', /urgent/, provide_insights: true)
+
+results.each do |file_result|
+  file_result[:result].each do |match|
+    insights = match.insights
+    puts "From: #{insights[:msg_from]}"              # e.g. "sender@example.com"
+    puts "To: #{insights[:msg_to].join(', ')}"       # e.g. ["recipient@example.com"]
+    puts "Subject: #{insights[:msg_subject]}"        # e.g. "Project Update"
+    puts "Date: #{insights[:msg_date]}"              # e.g. "2024-01-15 10:30:00"
+    puts "Location: #{insights[:msg_location]}"      # e.g. "body", "subject", "attachment"
+    puts "Body Type: #{insights[:msg_body_type]}"    # e.g. "plain", "html"
+  end
+end
+```
+
+Notes:
+- `:msg_from` shows the sender's email address
+- `:msg_to` is an array of recipient email addresses
+- `:msg_cc` is an array of CC recipients (if any)
+- `:msg_subject` contains the email subject line
+- `:msg_date` shows when the email was sent
+- `:msg_location` identifies which part contained the match (subject, body, attachment, or unknown)
+- `:msg_body_type` indicates 'plain' or 'html' for body matches, nil otherwise
+- MSG format is Microsoft Outlook's proprietary email message format
 
 Dependency note:
 - YAML parsing is provided via `psych` (the YAML parser used by Ruby). If your environment attempts to build native extensions for `psych` and fails, run:
